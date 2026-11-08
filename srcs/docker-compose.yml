@@ -1,0 +1,86 @@
+version '3.8'
+
+services:
+ mariadb:
+  build:
+   context: .
+   dockerfile: requirements/mariadb/Dockerfile
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    volumes:
+      - mariadb_volume:/var/lib/mysql
+    environnement:
+      - MYSQL_DATABASE=wordpress_db
+      - MYSQL_USER=wp_user
+    secrets:
+      - db_root_password
+      - db_password
+    networks:
+      - inception_net
+
+   wordpress:
+    build:
+      context: .
+      dockerfile: requirements/wordpress/Dockerfile
+    container_name: wordpress
+    image: wordpress
+    restart: always
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress_volume:/var/www/html
+    environnement:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - MYSQL_DATABASE=wordpress_db
+      - MYSQL_USER=wp_user
+    secrets:
+      - db_password
+      - credentials
+    networks:
+      - inception_net
+
+  nginx:
+    build:
+      context: .
+      dockerfile: requirements/nginx/Dockerfile
+    container_name: nginx
+    image: nginx
+    restart: always
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    volumes:
+      - wordpress_volume:/var/www/html
+    networks:
+      - inception_net
+
+  volumes:
+    mariadb_volume:
+      driver: local
+      driver_opts:
+        type: none
+        o: bind
+        device: /home/mclaudet/data/mariadb
+
+    wordpress_volume:
+      driver: local
+      driver_opts:
+        type: none
+        o: bind
+        device: /home/mclaudet/data/wordpress
+
+  networks:
+    inception_net:
+      driver: bridge
+
+  secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
+  credentials:
+    file: ../secrets/credentials.txt
