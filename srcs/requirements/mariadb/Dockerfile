@@ -1,10 +1,12 @@
 FROM debian:bullseye
 
-RUN apt update && apt upgrade -y && apt install -y mariadb-server && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends mariadb-server && \
+    rm -rf /var/lib/apt/lists/*
 
+COPY conf/my.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 COPY tools/initial_db.sh /usr/local/bin/initial_db.sh
 RUN chmod +x /usr/local/bin/initial_db.sh
 
 EXPOSE 3306
 
-ENTRYPOINT ["initial_db.sh"]
+ENTRYPOINT ["/usr/local/bin/initial_db.sh"]

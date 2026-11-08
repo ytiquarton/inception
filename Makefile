@@ -1,17 +1,15 @@
 all:
-	@mkdir -p /home/mclaudet/data/mariadb
-	@mkdir -p /home/mclaudet/data/wordpress
-	docker-compose -f srcs/docker-compose.yml up -d --build
+	@mkdir -p $(MARIADB_DIR) $(WORDPRESS_DIR)
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up -d --build
 
 down:
-	docker-compose -f srcs/docker-compose.yml down
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) down
 
 clean:
-	docker-compose -f srcs/docker-compose.yml down -v --rmi all
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) down -v --rmi all
 
 fclean: clean
-	@sudo rm -rf /home/mclaudet/data/mariadb
-	@sudo rm -rf /home/mclaudet/data/wordpress
+	@rm -rf $(MARIADB_DIR) $(WORDPRESS_DIR)
 	docker system prune -af
 
 re: fclean all

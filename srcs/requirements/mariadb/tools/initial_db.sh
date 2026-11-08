@@ -2,18 +2,21 @@
 
 set -e
 
+DB_ROOT_PWD="$(cat /run/secrets/db_root_password)"
+DB_USER_PWD="$(cat /run/secrets/db_password)"
+
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql >/dev/null 2>&1 || true
+fi
+
 if [ ! -d "/var/lib/mysql/${MYSQL_DATABASE}" ]; then
+    mysqld --user=mysql --console &
 
-	mysqld & 
+    until mariadb-admin ping --silent; do
+        sleep 1
+    done
 
-	until mysqladmin ping --silent; do
-		sleep 1
-	done
-
-	DB_ROOT_PWD=$(cat /run/secrets/db_root_password)
-	DB_USER_PWD=$(cat /run/secrets/db_password)
-
-	mysql -u root <<EOF
+    mariadb -u root <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PWD}';
 CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${DB_USER_PWD}';
@@ -21,7 +24,7 @@ GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-	mysqladmin -u root -p "${DB_ROOT_PWD}" shutdown
+    mariadb-admin -u root -p"${DB_ROOT_PWD}" shutdown
 fi
 
-exec mysqld
+exec mysqld --user=mysql --console
