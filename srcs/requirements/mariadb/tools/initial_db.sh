@@ -5,6 +5,9 @@ set -e
 DB_ROOT_PWD="$(cat /run/secrets/db_root_password)"
 DB_USER_PWD="$(cat /run/secrets/db_password)"
 
+mkdir -p /run/mysqld
+chown -R mysql:mysql /run/mysqld
+
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql >/dev/null 2>&1 || true
 fi
