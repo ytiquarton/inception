@@ -2,7 +2,7 @@ MARIADB_DIR = $(HOME)/data/mariadb
 WORDPRESS_DIR = $(HOME)/data/wordpress
 COMPOSE_FILE = srcs/docker-compose.yml
 DOCKER_COMPOSE = docker compose
-SITE = https://localhost
+SITE = https://${DOMAIN_NAME}
 
 all:
 	mkdir -p $(MARIADB_DIR) $(WORDPRESS_DIR)

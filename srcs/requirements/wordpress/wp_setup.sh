@@ -1,7 +1,9 @@
 #!/bin/bash
 
+#arrete le script si une commande échoue
 set -e
 
+# aller dans le dossier wordpress
 cd /var/www/html
 
 if [ ! -f "wp-config.php" ]; then

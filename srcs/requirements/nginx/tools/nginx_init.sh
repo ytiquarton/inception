@@ -1,7 +1,9 @@
 #!/bin/bash
 
+#arrte le script si une commande échoue
 set -e
 
+#verification du certificat ssl et generation si inexistant
 if [ ! -f /etc/nginx/ssl/inception.crt ]; then
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
         -keyout /etc/nginx/ssl/inception.key \
