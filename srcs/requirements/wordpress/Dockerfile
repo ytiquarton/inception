@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates php8.2-fpm php8.2-mysql curl mariadb-client && \
     rm -rf /var/lib/apt/lists/*
 
+    #installation de WP-CLI (en gros le terminal de wordpress) pour config wp
 RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp && \
     chmod +x /usr/local/bin/wp
 
