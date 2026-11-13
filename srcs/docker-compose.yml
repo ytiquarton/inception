@@ -1,21 +1,26 @@
 services:
   mariadb:
     build:
+      #construction de mariadb en allant dans le rep et le fichier
       context: ./requirements/mariadb
       dockerfile: Dockerfile
     container_name: mariadb
     image: mariadb
     restart: always
+    #monte le volume persistant dans le conteneur
     volumes:
       - mariadb_volume:/var/lib/mysql
+    #cherche les variables d'env et les injecte dans le conteneur
     environment:
       MYSQL_DATABASE: wordpress_db
       MYSQL_USER: wp_user
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    #pareil mais pour les mdp
     secrets:
       - db_root_password
       - db_password
+    #du reseau inception
     networks:
       - inception_net
 
@@ -26,14 +31,17 @@ services:
     container_name: wordpress
     image: wordpress
     restart: always
+    #demarrer mariadb avant wp
     depends_on:
       - mariadb
+    #dossier partagé entre wp et nginx
     volumes:
       - wordpress_volume:/var/www/html
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
       MYSQL_DATABASE: wordpress_db
       MYSQL_USER: wp_user
+      #indique que la database est dans ce conteneur
       MYSQL_HOST: mariadb
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
       WP_ADMIN_PASSWORD_FILE: /run/secrets/credentials
@@ -52,15 +60,19 @@ services:
     restart: always
     depends_on:
       - wordpress
+    # ouvre le port 443 de l'hote et redirige le trafic vers le 443 du conteneur
     ports:
       - "443:443"
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
+    #volume partagé avec wordpress
     volumes:
       - wordpress_volume:/var/www/html
     networks:
       - inception_net
 
+#lier les dossiers du conteneurs à ceux de la machine hôte pour assurer la persistance
+#des données dans le disque dur de la machine hôte
 volumes:
   mariadb_volume:
     driver: local
@@ -77,9 +89,11 @@ volumes:
       device: ${HOME}/data/wordpress
 
 networks:
+  #creer un reseau virtuel privé pour la communication des services
   inception_net:
     driver: bridge
 
+#defini où docker va chercher les mdp
 secrets:
   db_root_password:
     file: ../secrets/db_root_password.txt
