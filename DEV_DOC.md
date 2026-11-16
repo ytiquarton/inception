@@ -132,6 +132,26 @@ The services connect through the Compose bridge network `inception_net` and use
 service names (`mariadb`, `wordpress`) to communicate. Only Nginx publishes a
 host port: `443:443`. MariaDB and PHP-FPM ports are not published to the host.
 
+## Accessing database
+
+- Open an interactive terminal in mariadb container
+
+```bash
+docker exec -it mariadb bash
+```
+- Connect to mariadb server as a root
+
+```bash
+mariadb -u root -p
+```
+- To show the databases list and to change database 
+
+```SQL
+SHOW DATABASES;
+
+USE name_of_database;
+```
+
 ## Troubleshooting
 
 - Inspect service state with `docker compose -f srcs/docker-compose.yml ps`.

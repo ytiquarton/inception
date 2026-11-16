@@ -1,9 +1,9 @@
-MARIADB_DIR = /home/mclaudet/data/mariadb
-WORDPRESS_DIR = /home/mclaudet/data/wordpress
+MARIADB_DIR = $(HOME)/data/mariadb
+WORDPRESS_DIR = $(HOME)/data/wordpress
 COMPOSE_FILE = srcs/docker-compose.yml
 DOCKER_COMPOSE = docker compose
 
-SITE = https://mclaudet.42.fr
+SITE = https://$(USER).42.fr
 
 all:
 	mkdir -p $(MARIADB_DIR) $(WORDPRESS_DIR)

@@ -34,11 +34,16 @@ for _ in $(seq 1 30); do
     sleep 2
 done
 
+#check pour voir si le mdp contient un admin
+WP_ADMIN_PWD="$(cat /run/secrets/credentials)"
 
+    if echo "${WP_ADMIN_PWD}" | grep -qi "admin" ; then
+        echo "WP_ADMIN_PWD can't contain 'admin'"
+        exit 1
+    fi
 #config de wordpress
 if ! wp core is-installed --allow-root --path=/var/www/html >/dev/null 2>&1; then
-    WP_ADMIN_PWD="$(cat /run/secrets/credentials)"
-
+    
     wp core install \
         --url="https://${DOMAIN_NAME}" \
         --title="Inception 42" \
@@ -50,7 +55,7 @@ if ! wp core is-installed --allow-root --path=/var/www/html >/dev/null 2>&1; the
     if ! wp user get simple_user --allow-root --path=/var/www/html >/dev/null 2>&1; then
         wp user create simple_user simple_user@42.fr \
             --role=subscriber \
-            --user_pass="simple_password" \
+            --user_pass="${SIMPLE_USER_PWD}" \
             --allow-root
     fi
 fi

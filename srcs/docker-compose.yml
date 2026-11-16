@@ -41,6 +41,7 @@ services:
       DOMAIN_NAME: ${DOMAIN_NAME}
       MYSQL_DATABASE: wordpress_db
       MYSQL_USER: wp_user
+      SIMPLE_USER_PWD: ${SIMPLE_USER_PWD}
       #indique que la database est dans ce conteneur
       MYSQL_HOST: mariadb
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
