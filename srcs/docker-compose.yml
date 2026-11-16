@@ -79,7 +79,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      o: bind
+      o: bind # binder le vo,ume du container à celui de la machine hôte
       device: ${HOME}/data/mariadb
 
   wordpress_volume:

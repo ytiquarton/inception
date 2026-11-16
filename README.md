@@ -121,12 +121,7 @@ docker compose -f srcs/docker-compose.yml down
 
 ### AI usage
 
-AI assistance was used to draft and organize the project documentation:
-the root README, the end-user guide, and the developer guide. It helped explain
-the existing Docker Compose configuration, summarize the Makefile commands, and
-describe the requested Docker design comparisons. The documentation was checked
-against the repository's configuration files and startup scripts. AI was not
-used to implement the application or container code.
+AI has been used for learning and debugging, redact the documentation : README, USER_DOC and DEV_DOC. It helped fins informations faster. The suggestions were reviewed, tested, learned and adapted to the actual project environnement before being used.
 
 ## Further documentation
 
